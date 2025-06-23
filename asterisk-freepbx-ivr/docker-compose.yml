@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  asterisk:
+    build:
+      context: ./asterisk
+    ports:
+      - "5060:5060/udp"
+      - "5060:5060/tcp"
+      - "10000-20000:10000-20000/udp"
+    volumes:
+      - ./asterisk/config:/etc/asterisk
+      - ./asterisk/sounds:/var/lib/asterisk/sounds
+    environment:
+      - AST_USER=asterisk
+      - AST_PASS=asterisk
+
+  freepbx:
+    build:
+      context: ./freepbx
+      dockerfile: Dockerfile.simple
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+      - asterisk
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=freepbxuser
+      - MYSQL_PASSWORD=freepbxpass
+      - MYSQL_DATABASE=freepbx
+
+  mysql:
+    build:
+      context: ./mysql
+    volumes:
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=freepbx
+      - MYSQL_USER=freepbxuser
+      - MYSQL_PASSWORD=freepbxpass
+
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - freepbx
+
+networks:
+  default:
+    driver: bridge

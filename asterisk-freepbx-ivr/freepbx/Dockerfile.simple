@@ -1,0 +1,29 @@
+# Alternative simpler approach for Asterisk Web Interface
+FROM php:7.4-apache
+
+# Install system dependencies  
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    nano \
+    unzip \
+    mariadb-client \
+    && docker-php-ext-install mysqli pdo pdo_mysql \
+    && a2enmod rewrite
+
+# Create a simple Asterisk management interface
+WORKDIR /var/www/html
+
+# Copy web interface files
+COPY web/ ./
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html
+
+# Copy Apache configuration
+COPY apache.conf /etc/apache2/sites-available/000-default.conf
+
+EXPOSE 80
+
+CMD ["apache2-foreground"]
