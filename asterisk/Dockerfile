@@ -64,9 +64,12 @@ RUN useradd -m asterisk && \
     mkdir -p /var/run/asterisk /var/log/asterisk /var/spool/asterisk && \
     chown -R asterisk:asterisk /etc/asterisk /var/lib/asterisk /var/log/asterisk /var/spool/asterisk /var/run/asterisk /usr/lib/asterisk
 
-# Configuration de base
+# Configuration de base (après make samples pour éviter l'écrasement)
 COPY config/ /etc/asterisk/
 COPY config/odbc.ini /etc/odbc.ini
+
+# S'assurer que les permissions sont correctes après la copie
+RUN chown -R asterisk:asterisk /etc/asterisk
 
 # Configuration ODBC
 RUN echo "[MySQL ODBC 8.0 ANSI Driver]" > /etc/odbcinst.ini && \
