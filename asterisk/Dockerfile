@@ -68,8 +68,12 @@ RUN useradd -m asterisk && \
 COPY config/ /etc/asterisk/
 COPY config/odbc.ini /etc/odbc.ini
 
+# Copy custom sound files for IVR
+COPY sounds/ /var/lib/asterisk/sounds/
+
 # S'assurer que les permissions sont correctes après la copie
-RUN chown -R asterisk:asterisk /etc/asterisk
+RUN chown -R asterisk:asterisk /etc/asterisk && \
+    chown -R asterisk:asterisk /var/lib/asterisk/sounds
 
 # Configuration ODBC
 RUN echo "[MySQL ODBC 8.0 ANSI Driver]" > /etc/odbcinst.ini && \
