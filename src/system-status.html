@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoriaV2 System Status</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .status-card { background: white; margin: 15px 0; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .status-header { font-size: 24px; margin-bottom: 15px; color: #333; }
+        .status-item { margin: 10px 0; padding: 10px; border-left: 4px solid #667eea; background: #f8f9ff; }
+        .status-working { border-left-color: #10b981; background: #f0fdf4; }
+        .status-issue { border-left-color: #f59e0b; background: #fffbeb; }
+        .status-error { border-left-color: #ef4444; background: #fef2f2; }
+        .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+        .service-box { padding: 15px; border: 1px solid #e5e7eb; border-radius: 8px; background: white; }
+        .service-name { font-weight: bold; color: #374151; margin-bottom: 5px; }
+        .service-url { color: #667eea; text-decoration: none; font-size: 14px; }
+        .service-url:hover { text-decoration: underline; }
+        .code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="status-card">
+            <div class="status-header">🚀 DoriaV2 VoIP/PBX System Status</div>
+            <p>Complete development platform for VoIP/PBX applications with integrated telephony services.</p>
+            <p><strong>Build Date:</strong> June 25, 2025</p>
+        </div>
+
+        <div class="status-card">
+            <div class="status-header">✅ Working Services</div>
+            
+            <div class="status-item status-working">
+                <strong>🗄️ MySQL Database</strong><br>
+                Status: Healthy and operational<br>
+                Database: doriav2 with 9 tables (users, products, orders, etc.)<br>
+                Port: 3306
+            </div>
+
+            <div class="status-item status-working">
+                <strong>🔴 Redis Cache</strong><br>
+                Status: Healthy and operational<br>
+                Purpose: Session storage and caching<br>
+                Port: 6379
+            </div>
+
+            <div class="status-item status-working">
+                <strong>📱 Asterisk PBX</strong><br>
+                Status: Healthy and running<br>
+                Version: Asterisk 20.14.1<br>
+                SIP Ports: 5060 (UDP/TCP), AMI: 5038, RTP: 10000-10100
+            </div>
+
+            <div class="status-item status-working">
+                <strong>🌐 PHP/Apache Web Server</strong><br>
+                Status: Running with PHP 8.2.28<br>
+                Features: PDO MySQL, GD, mod_rewrite enabled<br>
+                Port: 8080
+            </div>
+
+            <div class="status-item status-working">
+                <strong>📊 phpMyAdmin</strong><br>
+                Status: Running and accessible<br>
+                Purpose: Database management interface<br>
+                Port: 8081
+            </div>
+
+            <div class="status-item status-working">
+                <strong>📧 MailHog</strong><br>
+                Status: Running for email testing<br>
+                Web UI: 8025, SMTP: 1025<br>
+                Purpose: Development email capture
+            </div>
+        </div>
+
+        <div class="status-card">
+            <div class="status-header">🌐 Available Interfaces</div>
+            <div class="service-grid">
+                <div class="service-box">
+                    <div class="service-name">📊 System Dashboard</div>
+                    <a href="http://localhost:8080/dashboard.php" class="service-url" target="_blank">dashboard.php</a>
+                </div>
+                <div class="service-box">
+                    <div class="service-name">🔧 Connection Test</div>
+                    <a href="http://localhost:8080/test_connections.php" class="service-url" target="_blank">test_connections.php</a>
+                </div>
+                <div class="service-box">
+                    <div class="service-name">👥 SIP Users Management</div>
+                    <a href="http://localhost:8080/sip-users.html" class="service-url" target="_blank">sip-users.html</a>
+                </div>
+                <div class="service-box">
+                    <div class="service-name">🗄️ Database Admin</div>
+                    <a href="http://localhost:8081" class="service-url" target="_blank">localhost:8081</a>
+                </div>
+                <div class="service-box">
+                    <div class="service-name">📧 Email Testing</div>
+                    <a href="http://localhost:8025" class="service-url" target="_blank">localhost:8025</a>
+                </div>
+                <div class="service-box">
+                    <div class="service-name">📞 FreePBX Interface</div>
+                    <a href="http://localhost:8082" class="service-url" target="_blank">localhost:8082</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-card">
+            <div class="status-header">🔧 Infrastructure Details</div>
+            
+            <div class="status-item">
+                <strong>🐳 Docker Services:</strong><br>
+                • <span class="code">doriav2-mysql</span> - MySQL 8.0 database with custom schema<br>
+                • <span class="code">doriav2-redis</span> - Redis 7 cache server<br>
+                • <span class="code">doriav2-asterisk</span> - Asterisk 20 PBX server<br>
+                • <span class="code">doriav2-web</span> - PHP 8.2 + Apache web server<br>
+                • <span class="code">doriav2-phpmyadmin</span> - Database administration<br>
+                • <span class="code">doriav2-mailhog</span> - Email capture for testing<br>
+                • <span class="code">doriav2-freepbx</span> - FreePBX web interface
+            </div>
+
+            <div class="status-item">
+                <strong>🗂️ Project Structure:</strong><br>
+                • <span class="code">/mysql/</span> - Database configuration and initialization<br>
+                • <span class="code">/asterisk/</span> - PBX server configuration<br>
+                • <span class="code">/freepbx/</span> - FreePBX web interface setup<br>
+                • <span class="code">/src/</span> - Main application code and APIs
+            </div>
+
+            <div class="status-item">
+                <strong>🔌 Network Configuration:</strong><br>
+                • All services connected via <span class="code">doriav2_network</span> bridge<br>
+                • Persistent storage with named Docker volumes<br>
+                • Service health checks for reliable startup
+            </div>
+        </div>
+
+        <div class="status-card">
+            <div class="status-header">📈 Next Development Steps</div>
+            
+            <div class="status-item">
+                <strong>🔜 Immediate Tasks:</strong><br>
+                • Fix SIP Users API endpoint for full CRUD operations<br>
+                • Configure PJSIP endpoints for SIP phone registration<br>
+                • Implement SIP user provisioning automation<br>
+                • Create call routing and dialplan configuration
+            </div>
+
+            <div class="status-item">
+                <strong>🎯 Features to Implement:</strong><br>
+                • User authentication and session management<br>
+                • Real-time call monitoring dashboard<br>
+                • CDR (Call Detail Records) reporting<br>
+                • Voicemail management interface<br>
+                • SIP phone auto-provisioning<br>
+                • Call queue and IVR configuration
+            </div>
+
+            <div class="status-item">
+                <strong>🛡️ Security & Production:</strong><br>
+                • Implement proper authentication middleware<br>
+                • SSL/TLS certificate configuration<br>
+                • Firewall rules and network security<br>
+                • Backup and monitoring solutions<br>
+                • Production deployment scripts
+            </div>
+        </div>
+
+        <div class="status-card">
+            <div class="status-header">⚡ Quick Commands</div>
+            <div class="status-item">
+                <strong>Docker Management:</strong><br>
+                Start: <span class="code">docker compose up -d</span><br>
+                Stop: <span class="code">docker compose down</span><br>
+                Logs: <span class="code">docker compose logs [service]</span><br>
+                Status: <span class="code">docker compose ps</span>
+            </div>
+            <div class="status-item">
+                <strong>Asterisk Console:</strong><br>
+                Connect: <span class="code">docker exec -it doriav2-asterisk asterisk -rx "core show version"</span><br>
+                SIP Status: <span class="code">docker exec -it doriav2-asterisk asterisk -rx "pjsip show endpoints"</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,224 +1,251 @@
-# 📞 DoriaV2 - Système Asterisk/FreePBX Moderne
+# DoriaV2 E-commerce Platform
 
-Système de serveur vocal interactif (IVR) basé sur Asterisk avec interface web moderne et complète.
+A modern e-commerce platform built with PHP and MySQL, containerized with Docker for easy development and deployment.
 
-## 🚀 Démarrage rapide
+## 🚀 Quick Start
 
+### Prerequisites
+- Docker
+- Docker Compose
+- Git
+
+### Getting Started
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd DoriaV2
+   ```
+
+2. **Start the development environment**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Access the services**
+   - **Web Application**: http://localhost:8080
+   - **phpMyAdmin**: http://localhost:8081
+   - **MailHog (Email testing)**: http://localhost:8025
+
+## 🏗️ Architecture
+
+### Services
+
+#### MySQL Database (`mysql`)
+- **Image**: Custom built from MySQL 8.0
+- **Port**: 3306
+- **Database**: `doriav2`
+- **User**: `doriav2_user`
+- **Password**: `doriav2_password`
+- **Root Password**: `doriav2_root_password`
+
+#### Redis Cache (`redis`)
+- **Image**: Redis 7 Alpine
+- **Port**: 6379
+- **Password**: `doriav2_redis_password`
+- **Purpose**: Session storage and caching
+
+#### Web Server (`web`)
+- **Image**: PHP 8.2 with Apache
+- **Port**: 8080
+- **Document Root**: `/var/www/html` (mapped to `./src`)
+
+#### phpMyAdmin (`phpmyadmin`)
+- **Image**: Latest phpMyAdmin
+- **Port**: 8081
+- **Purpose**: Database management interface
+
+#### MailHog (`mailhog`)
+- **Image**: Latest MailHog
+- **Ports**: 8025 (Web UI), 1025 (SMTP)
+- **Purpose**: Email testing during development
+
+## 🗄️ Database Schema
+
+The database includes the following tables for a complete e-commerce solution:
+
+- **users**: Customer accounts and authentication
+- **categories**: Product categorization with hierarchical support
+- **products**: Product catalog with pricing, inventory, and SEO
+- **addresses**: Customer shipping and billing addresses
+- **orders**: Order management with status tracking
+- **order_items**: Individual items within orders
+- **shopping_cart**: Persistent shopping cart functionality
+- **reviews**: Product reviews and ratings
+- **admin_users**: Administrative user accounts
+
+### Sample Data
+The database is pre-populated with sample data including:
+- 5 product categories
+- 3 sample users
+- 5 sample products
+- 2 admin users
+- Sample addresses, cart items, orders, and reviews
+
+## 🔧 Development
+
+### File Structure
+```
+DoriaV2/
+├── docker-compose.yml          # Main orchestration file
+├── mysql/                      # MySQL container configuration
+│   ├── Dockerfile             # Custom MySQL image
+│   ├── my.cnf                 # MySQL configuration
+│   └── init.sql               # Database initialization
+├── src/                       # Web application source code
+│   └── index.php             # Environment test page
+└── README.md                  # This file
+```
+
+### Environment Variables
+
+The following environment variables are available in the web container:
+
+- `DB_HOST`: MySQL host (default: mysql)
+- `DB_NAME`: Database name (default: doriav2)
+- `DB_USER`: Database user (default: doriav2_user)
+- `DB_PASSWORD`: Database password (default: doriav2_password)
+- `REDIS_HOST`: Redis host (default: redis)
+- `REDIS_PASSWORD`: Redis password (default: doriav2_redis_password)
+
+### Building and Running
+
+#### Start all services
 ```bash
-# Interface web moderne (NOUVEAU)
-./start-web-interface.sh     # 🌐 Interface web complète sur http://localhost:8081
-
-# Gestion du système Asterisk
-./asterisk-ctl.sh start      # ▶️  Démarrer le système
-./asterisk-ctl.sh status     # 📊 Vérifier l'état
-./asterisk-ctl.sh stop       # ⏹️  Arrêter le système
-
-# Ou utiliser docker compose directement
-docker compose up -d         # 🐳 Démarrer conteneurs
-docker compose ps            # 📋 État des conteneurs
-docker compose down          # 🛑 Arrêter conteneurs
+docker-compose up -d
 ```
 
-## 🌐 Interface Web Moderne (NOUVEAU)
-
-### Accès à l'interface
-- **Interface web**: http://localhost:8081
-- **API REST**: http://localhost:8081/api/
-- **Guide complet**: [web-interface/README.md](web-interface/README.md)
-
-### Fonctionnalités principales
-- 📊 **Tableau de bord** temps réel avec métriques système
-- 📞 **Gestion extensions** avec configuration Linphone intégrée
-- ⚙️ **Administration système** (Docker, Asterisk, logs)
-- 📄 **Journaux colorisés** en temps réel
-- 📱 **Design responsive** optimisé mobile
-- 🔔 **Notifications intelligentes** avec Toast
-- ⌨️ **Raccourcis clavier** pour navigation rapide
-
-### Technologies
-- Bootstrap 5.3 + Font Awesome 6.4
-- JavaScript ES6+ avec architecture modulaire
-- API REST Python/PHP avec gestion CORS
-- CSS3 avec animations et thème adaptatif
-
-## 📋 Configuration
-
-- **Asterisk** : Port SIP 5060/UDP, AMI 5038/TCP, RTP 10000-20000/UDP
-- **Interface Web** : http://localhost:8081 (moderne) 
-- **Extension test** : 1000 (osmo/osmoosmo)
-- **Base de données** : MariaDB 10.5
-- **Image Asterisk** : Ubuntu 20.04 avec installation personnalisée
-
-## 📁 Structure du projet (organisée)
-
-```
-├── asterisk-ctl.sh              # 🎯 Script principal de gestion
-├── start-web-interface.sh       # 🌐 Lanceur interface web moderne
-├── compose.yml                  # 🐳 Configuration Docker Compose
-├── README.md                    # 📖 Ce fichier
-├── asterisk-config/             # ⚙️  Configuration Asterisk
-│   ├── asterisk.conf            #     Configuration principale
-│   ├── sip.conf                 #     Extensions SIP (osmo)
-│   ├── extensions.conf          #     Plan de numérotation
-│   └── manager.conf             #     Interface AMI
-├── web-interface/               # 🌐 Interface web moderne (NOUVEAU)
-│   ├── index.html               #     Interface principale Bootstrap 5
-│   ├── styles.css               #     Styles personnalisés avec animations
-│   ├── script.js                #     JavaScript ES6+ modulaire
-│   ├── server.py                #     Serveur Python avec API REST
-│   ├── api.php                  #     Alternative PHP pour l'API
-│   └── README.md                #     Documentation complète interface
-├── scripts/                     # 🛠️  Tous les scripts (50+ fichiers)
-│   ├── manage.sh                #     Script historique principal
-│   ├── create-osmo-extension.sh #     Création extension
-│   ├── configure-linphone.sh    #     Config client SIP
-│   └── ...                     #     Diagnostic, test, réparation
-├── docs/                        # 📚 Documentation complète (13 fichiers)
-│   ├── GUIDE_FINAL.md           #     Guide complet
-│   ├── LINPHONE_SETUP.md        #     Configuration client
-│   └── ...                     #     Résolution problèmes, IVR
-└── backup/                      # 🗄️  Sauvegardes et fichiers obsolètes
-```
-
-## 🔧 Commandes principales
-
+#### View logs
 ```bash
-# Interface web moderne
-./start-web-interface.sh     # 🌐 Lancer interface web (recommandé)
-./test-web-interface.sh      # 🧪 Tester toutes les fonctionnalités
-
-# Gestion système Asterisk
-./asterisk-ctl.sh start      # ▶️  Démarrer tout le système
-./asterisk-ctl.sh setup      # ⚙️  Configurer l'extension osmo
-./asterisk-ctl.sh test       # 🧪 Tester la connectivité
-./asterisk-ctl.sh linphone   # 📱 Guide configuration Linphone
-./asterisk-ctl.sh logs       # 📄 Voir les logs Asterisk
-./asterisk-ctl.sh clean      # 🧹 Nettoyage complet
+docker-compose logs -f [service_name]
 ```
 
-## 🎯 Nouveautés Interface Web v2.0
-
-### 🚀 Lancement rapide
+#### Stop all services
 ```bash
-./start-web-interface.sh
-# Interface accessible sur http://localhost:8081
+docker-compose down
 ```
 
-### ✨ Fonctionnalités clés
-- **Dashboard temps réel** avec statut Asterisk/Docker
-- **Configuration Linphone** intégrée avec guide pas à pas
-- **API REST complète** pour automatisation
-- **Logs colorisés** Asterisk et Docker en temps réel
-- **Responsive design** mobile-friendly
-- **Thème moderne** avec animations CSS3
-
-### 🔌 API REST disponible
+#### Rebuild containers
 ```bash
-curl http://localhost:8081/api/status          # Statut système
-curl -X POST http://localhost:8081/api/control/start  # Démarrer Asterisk
-curl http://localhost:8081/api/logs/asterisk   # Logs Asterisk
-curl -X POST http://localhost:8081/api/docker/up      # Démarrer conteneurs
+docker-compose build --no-cache
+docker-compose up -d
 ```
 
-## 📱 Configuration Linphone (automatisée)
-
-## 📱 Configuration Linphone (automatisée)
-
-### Via l'interface web (recommandé)
-1. Aller sur http://localhost:8081
-2. Cliquer sur l'onglet "Extensions"
-3. Cliquer sur "Configuration Linphone"
-4. Suivre le guide intégré avec paramètres pré-remplis
-
-### Configuration manuelle
-1. **Serveur** : `localhost:5060` (ou IP de votre machine)
-2. **Nom d'utilisateur** : `osmo`
-3. **Mot de passe** : `osmoosmo`
-4. **Extension** : `1000`
-5. **Transport** : `UDP`
-
-### Numéros de test
-- `*43` - Test d'écho (recommandé pour premier test)
-- `*97` - Messagerie vocale
-- `123` - Message de bienvenue
-- `1000` - Appeler l'extension osmo
-
-## 🆘 Résolution de problèmes
-
-### Interface web non accessible
+#### Access container shells
 ```bash
-# Vérifier le port utilisé
-./start-web-interface.sh 8082  # Essayer un autre port
+# Web container
+docker-compose exec web bash
 
-# Vérifier Python
-python3 --version
+# MySQL container
+docker-compose exec mysql bash
 
-# Vérifier les logs
-tail -f web-interface/logs/*.log
+# Redis container
+docker-compose exec redis sh
 ```
 
-### Asterisk ne démarre pas
+## 🔍 Database Access
+
+### Via phpMyAdmin
+1. Open http://localhost:8081
+2. Login with:
+   - **Server**: mysql
+   - **Username**: doriav2_user
+   - **Password**: doriav2_password
+
+### Via Command Line
 ```bash
-./asterisk-ctl.sh status    # Vérifier l'état
-./asterisk-ctl.sh clean     # Nettoyage complet
-docker compose logs asterisk  # Voir les erreurs
+# Connect to MySQL container
+docker-compose exec mysql mysql -u doriav2_user -p doriav2
+
+# Or as root
+docker-compose exec mysql mysql -u root -p
 ```
 
-## 📚 Documentation complète
+### Via External Client
+- **Host**: localhost
+- **Port**: 3306
+- **Database**: doriav2
+- **Username**: doriav2_user
+- **Password**: doriav2_password
 
-- **Interface Web** : [web-interface/README.md](web-interface/README.md)
-- **Guide complet** : [docs/GUIDE_FINAL.md](docs/GUIDE_FINAL.md)
-- **Configuration Linphone** : [docs/LINPHONE_SETUP.md](docs/LINPHONE_SETUP.md)
-- **Configuration IVR** : [docs/IVR_CONFIGURATION.md](docs/IVR_CONFIGURATION.md)
-- **Résolution problèmes** : [docs/RESOLUTION_SUCCES.md](docs/RESOLUTION_SUCCES.md)
+## 📧 Email Testing
 
-## 🎉 État du projet
+MailHog captures all emails sent by the application:
 
-### ✅ Fonctionnel
-- ✅ Interface web moderne complète
-- ✅ Configuration Asterisk simplifiée
-- ✅ Extension osmo (1000) avec SIP
-- ✅ API REST pour automatisation
-- ✅ Tests automatisés
-- ✅ Documentation complète
-- ✅ Scripts de gestion organisés
+1. Configure your PHP application to use SMTP:
+   - **Host**: mailhog
+   - **Port**: 1025
+   - **No authentication required**
 
-### 🔄 En cours / Prochaines étapes
-- 🔄 Résolution démarrage conteneur Asterisk
-- 📞 Tests d'appels réels avec Linphone
-- 🎯 Configuration IVR avancée
-- 📈 Monitoring et métriques avancées
+2. View captured emails at http://localhost:8025
 
----
+## 🔒 Security Notes
 
-🎯 **DoriaV2** - Système Asterisk moderne avec interface web complète
-4. **Transport** : UDP
+> **⚠️ Development Only**: This configuration is for development purposes only. Do not use these credentials or configuration in production.
 
-## 🧪 Tests d'appels
+### Default Credentials
+- **MySQL Root**: `doriav2_root_password`
+- **MySQL User**: `doriav2_user` / `doriav2_password`
+- **Redis**: `doriav2_redis_password`
+- **Admin User**: `admin@doriav2.com` / (check database for hashed password)
 
-- `*43` - Test d'écho
-- `*97` - Messagerie vocale
-- `123` - Message de test
-- `1000` - Appel vers l'extension osmo
+## 🛠️ Customization
 
-## 📚 Documentation
+### Adding PHP Extensions
+Edit the `web` service command in `docker-compose.yml` to install additional extensions:
 
-- `docs/GUIDE_FINAL.md` - Guide complet
-- `docs/LINPHONE_SETUP.md` - Configuration client SIP
-- `docs/IVR_CONFIGURATION.md` - Configuration IVR avancée
-- `docs/RESOLUTION_SUCCES.md` - Résolution des problèmes
+```yaml
+command: >
+  bash -c "
+  apt-get update &&
+  apt-get install -y [additional-packages] &&
+  docker-php-ext-install [extension-name] &&
+  apache2-foreground
+  "
+```
 
-## 🛠️ Scripts disponibles
+### MySQL Configuration
+Modify `mysql/my.cnf` to adjust MySQL settings for your needs.
 
-Plus de 50 scripts dans le dossier `scripts/` pour :
-- Création et gestion d'extensions
-- Diagnostic et réparation
-- Configuration clients SIP
-- Tests de connectivité
-- Gestion système
+### Adding Services
+Add new services to `docker-compose.yml` as needed (e.g., Elasticsearch, Node.js APIs, etc.).
 
----
+## 📊 Monitoring
 
-**Version** : Docker Compose avec Asterisk simple (andrius/asterisk:latest)
-**Dernière mise à jour** : 24 juin 2025
-**Statut** : Projet nettoyé et organisé ✅
+### Health Checks
+The MySQL and Redis services include health checks. View status with:
+```bash
+docker-compose ps
+```
+
+### Volume Management
+Data persists in named Docker volumes:
+- `doriav2_mysql_data`: Database files
+- `doriav2_redis_data`: Redis data
+- `doriav2_mysql_logs`: MySQL logs
+- `doriav2_web_logs`: Apache logs
+
+## 🚀 Next Steps
+
+1. **Implement Authentication**: Build user registration/login system
+2. **Product Management**: Create admin interface for products
+3. **Shopping Cart**: Implement cart functionality
+4. **Payment Integration**: Add payment gateway (Stripe, PayPal)
+5. **Order Management**: Build order processing system
+6. **Email Notifications**: Set up transactional emails
+7. **API Development**: Create REST API for mobile apps
+8. **Search & Filtering**: Add product search capabilities
+9. **Performance**: Implement caching strategies
+10. **Testing**: Add unit and integration tests
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+[Add your license information here]
