@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  asterisk:
+    image: ubuntu:20.04
+    container_name: asterisk
+    restart: unless-stopped
+    command: >
+      bash -c "
+      apt-get update -q && 
+      DEBIAN_FRONTEND=noninteractive apt-get install -y asterisk &&
+      asterisk -f -vvv
+      "
+    ports:
+      - "5060:5060/udp"
+      - "5038:5038"
+      - "10000-20000:10000-20000/udp"
+    volumes:
+      - asterisk_data:/var/lib/asterisk
+      - asterisk_logs:/var/log/asterisk
+    networks:
+      - pbxnet
+
+  freepbx-web:
+    image: nginx:alpine
+    container_name: freepbx-web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web-interface:/usr/share/nginx/html
+    networks:
+      - pbxnet
+
+  db:
+    image: mariadb:10.5
+    container_name: freepbx-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=asterisk
+      - MYSQL_USER=asterisk
+      - MYSQL_PASSWORD=asteriskpass
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - pbxnet
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "asterisk", "-pasteriskpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+volumes:
+  asterisk_data:
+  asterisk_logs:
+  db_data:
+
+networks:
+  pbxnet:
+    driver: bridge

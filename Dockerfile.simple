@@ -1,0 +1,33 @@
+FROM ubuntu:20.04
+
+# Éviter les questions interactives
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Installer Asterisk
+RUN apt-get update && \
+    apt-get install -y asterisk asterisk-core-sounds-en && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Configuration minimale
+RUN echo '[general]' > /etc/asterisk/sip.conf && \
+    echo 'context=default' >> /etc/asterisk/sip.conf && \
+    echo 'udpbindaddr=0.0.0.0:5060' >> /etc/asterisk/sip.conf && \
+    echo 'disallow=all' >> /etc/asterisk/sip.conf && \
+    echo 'allow=ulaw' >> /etc/asterisk/sip.conf && \
+    echo '[osmo]' >> /etc/asterisk/sip.conf && \
+    echo 'type=friend' >> /etc/asterisk/sip.conf && \
+    echo 'secret=osmoosmo' >> /etc/asterisk/sip.conf && \
+    echo 'host=dynamic' >> /etc/asterisk/sip.conf && \
+    echo 'context=default' >> /etc/asterisk/sip.conf
+
+RUN echo '[default]' > /etc/asterisk/extensions.conf && \
+    echo 'exten => *43,1,Answer()' >> /etc/asterisk/extensions.conf && \
+    echo 'exten => *43,n,Echo()' >> /etc/asterisk/extensions.conf && \
+    echo 'exten => *43,n,Hangup()' >> /etc/asterisk/extensions.conf
+
+# Exposer les ports
+EXPOSE 5060/udp 5038
+
+# Commande de démarrage
+CMD ["asterisk", "-f", "-vvv"]
