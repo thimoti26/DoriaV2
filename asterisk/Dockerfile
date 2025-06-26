@@ -75,18 +75,20 @@ COPY sounds/ /var/lib/asterisk/sounds/
 RUN chown -R asterisk:asterisk /etc/asterisk && \
     chown -R asterisk:asterisk /var/lib/asterisk/sounds
 
-# Configuration ODBC
+# Configuration ODBC (Fix pour OpenSSL 3.0 compatibility)
 RUN echo "[MySQL ODBC 8.0 ANSI Driver]" > /etc/odbcinst.ini && \
     echo "Description = MySQL ODBC 8.0 ANSI Driver" >> /etc/odbcinst.ini && \
     echo "Driver = /usr/lib/aarch64-linux-gnu/odbc/libmyodbc8a.so" >> /etc/odbcinst.ini && \
-    echo "Setup = /usr/lib/aarch64-linux-gnu/odbc/libmyodbc8S.so" >> /etc/odbcinst.ini && \
     echo "FileUsage = 1" >> /etc/odbcinst.ini && \
     echo "" >> /etc/odbcinst.ini && \
     echo "[MySQL ODBC 8.0 Unicode Driver]" >> /etc/odbcinst.ini && \
     echo "Description = MySQL ODBC 8.0 Unicode Driver" >> /etc/odbcinst.ini && \
     echo "Driver = /usr/lib/aarch64-linux-gnu/odbc/libmyodbc8w.so" >> /etc/odbcinst.ini && \
-    echo "Setup = /usr/lib/aarch64-linux-gnu/odbc/libmyodbc8S.so" >> /etc/odbcinst.ini && \
     echo "FileUsage = 1" >> /etc/odbcinst.ini
+
+# Fix OpenSSL compatibility pour MySQL ODBC driver
+RUN ln -sf /usr/lib/aarch64-linux-gnu/libssl.so.3 /usr/lib/aarch64-linux-gnu/libssl.so.1.1 && \
+    ln -sf /usr/lib/aarch64-linux-gnu/libcrypto.so.3 /usr/lib/aarch64-linux-gnu/libcrypto.so.1.1
 
 EXPOSE 5060/udp 5060/tcp 5038 10000-10100/udp
 

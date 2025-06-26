@@ -5,7 +5,43 @@ USE doriav2;
 -- Create user for DoriaV2 application
 CREATE USER IF NOT EXISTS 'doriav2_user'@'%' IDENTIFIED BY 'doriav2_password';
 GRANT ALL PRIVILEGES ON doriav2.* TO 'doriav2_user'@'%';
+
+-- Create Asterisk database for telephony system
+CREATE DATABASE IF NOT EXISTS asterisk;
+
+-- Grant permissions on asterisk database to doriav2_user
+GRANT ALL PRIVILEGES ON asterisk.* TO 'doriav2_user'@'%';
 FLUSH PRIVILEGES;
+
+-- Create CDR table in asterisk database
+USE asterisk;
+CREATE TABLE IF NOT EXISTS cdr (
+    calldate datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    clid varchar(80) NOT NULL DEFAULT '',
+    src varchar(80) NOT NULL DEFAULT '',
+    dst varchar(80) NOT NULL DEFAULT '',
+    dcontext varchar(80) NOT NULL DEFAULT '',
+    channel varchar(80) NOT NULL DEFAULT '',
+    dstchannel varchar(80) NOT NULL DEFAULT '',
+    lastapp varchar(80) NOT NULL DEFAULT '',
+    lastdata varchar(80) NOT NULL DEFAULT '',
+    duration int(11) NOT NULL DEFAULT 0,
+    billsec int(11) NOT NULL DEFAULT 0,
+    disposition varchar(45) NOT NULL DEFAULT '',
+    amaflags int(11) NOT NULL DEFAULT 0,
+    accountcode varchar(20) NOT NULL DEFAULT '',
+    uniqueid varchar(32) NOT NULL DEFAULT '',
+    userfield varchar(255) NOT NULL DEFAULT '',
+    peeraccount varchar(20) NOT NULL DEFAULT '',
+    linkedid varchar(32) NOT NULL DEFAULT '',
+    sequence int(11) NOT NULL DEFAULT 0,
+    INDEX (calldate),
+    INDEX (dst),
+    INDEX (accountcode)
+);
+
+-- Switch back to doriav2 database for the rest of the initialization
+USE doriav2;
 
 -- Users table
 CREATE TABLE users (
