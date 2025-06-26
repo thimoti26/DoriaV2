@@ -1,0 +1,15 @@
+# Fichiers de développement
+.git/
+.gitignore
+README.md
+test-stack.sh
+cleanup.sh
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*~
+.DS_Store
+
+# Logs
+*.log

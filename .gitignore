@@ -1,0 +1,15 @@
+# Fichiers temporaires
+*.tmp
+*.bak
+*~
+.DS_Store
+
+# Logs
+*.log
+
+# Données sensibles
+.env
+
+# Volumes Docker (données persistantes)
+mysql_data/
+redis_data/
