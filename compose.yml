@@ -12,6 +12,9 @@ services:
     ports:
       - "3306:3306"
     volumes:
+      # Point de montage direct pour la configuration MySQL
+      - ./mysql/my.cnf:/etc/mysql/conf.d/custom.cnf:ro
+      # Volume persistant pour les données
       - mysql_data:/var/lib/mysql
       - mysql_logs:/var/log/mysql
     networks:
@@ -99,7 +102,21 @@ services:
       - "5038:5038"      # AMI (Asterisk Manager Interface)
       - "10000-10100:10000-10100/udp"  # RTP range
     volumes:
-      - asterisk_etc:/etc/asterisk
+      # Points de montage directs pour les fichiers de configuration (modifications en temps réel)
+      - ./asterisk/config/extensions.conf:/etc/asterisk/extensions.conf:ro
+      - ./asterisk/config/pjsip.conf:/etc/asterisk/pjsip.conf:ro
+      - ./asterisk/config/modules.conf:/etc/asterisk/modules.conf:ro
+      - ./asterisk/config/asterisk.conf:/etc/asterisk/asterisk.conf:ro
+      - ./asterisk/config/rtp.conf:/etc/asterisk/rtp.conf:ro
+      - ./asterisk/config/manager.conf:/etc/asterisk/manager.conf:ro
+      - ./asterisk/config/res_odbc.conf:/etc/asterisk/res_odbc.conf:ro
+      - ./asterisk/config/cdr_odbc.conf:/etc/asterisk/cdr_odbc.conf:ro
+      - ./asterisk/config/extconfig.conf:/etc/asterisk/extconfig.conf:ro
+      - ./asterisk/config/odbc.ini:/etc/odbc.ini:ro
+      # Fichiers audio personnalisés
+      - ./asterisk/sounds/custom:/var/lib/asterisk/sounds/custom:ro
+      # Volumes persistants pour les données
+      - asterisk_etc:/etc/asterisk/backup
       - asterisk_lib:/var/lib/asterisk
       - asterisk_log:/var/log/asterisk
       - asterisk_spool:/var/spool/asterisk
