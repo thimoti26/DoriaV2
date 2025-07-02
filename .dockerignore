@@ -2,14 +2,29 @@
 .git/
 .gitignore
 README.md
-test-stack.sh
-cleanup.sh
+ARCHITECTURE.md
+doria.sh
+
+# Scripts et tests (non nécessaires dans les conteneurs)
+scripts/
+tests/
+docs/
 
 # Fichiers temporaires
 *.tmp
 *.bak
+*.backup
+*.old
+*.orig
+*.save
 *~
 .DS_Store
+Thumbs.db
 
 # Logs
 *.log
+logs/
+
+# Cache et données temporaires
+cache/
+.cache/
