@@ -30,6 +30,7 @@
 | Document | Description |
 |----------|-------------|
 | **GUIDE_SVI_9999.md** | Guide complet du Serveur Vocal Interactif |
+| **GUIDE_SVI_MULTILINGUAL.md** | 🌐 **SVI Multilingue (FR/EN)** |
 | **TUTORIEL_LINPHONE_SUMMARY.md** | Résumé du tutoriel Linphone |
 
 ### 📋 Résumés Techniques

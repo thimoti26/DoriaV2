@@ -46,6 +46,9 @@ TESTS ET VALIDATION:
     test-linphone       Validation configuration Linphone
     test-network        Test connectivité réseau
     test-volumes        Test des volumes de configuration
+    test-svi            Test SVI multilingue (français/anglais)
+    test-svi-nav        Test navigation SVI interactif
+    test-svi-paths      Test automatique de tous les chemins SVI
 
 MAINTENANCE:
     debug-audio         Monitoring audio en temps réel
@@ -148,6 +151,18 @@ case "${1:-help}" in
     "test-volumes")
         check_test_exists "test-volumes.sh"
         "$TESTS_DIR/test-volumes.sh"
+        ;;
+    "test-svi")
+        check_test_exists "test-svi-multilingual.sh"
+        "$TESTS_DIR/test-svi-multilingual.sh"
+        ;;
+    "test-svi-nav")
+        check_test_exists "test-svi-navigation.sh"
+        "$TESTS_DIR/test-svi-navigation.sh"
+        ;;
+    "test-svi-paths")
+        check_test_exists "test-svi-paths.sh"
+        "$TESTS_DIR/test-svi-paths.sh"
         ;;
     "debug-audio")
         check_test_exists "debug-audio.sh"
