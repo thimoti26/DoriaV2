@@ -1,0 +1,11 @@
+; Extensions.conf généré par SVI Admin DoriaV2
+; 2025-07-09 09:29:44
+
+[ivr-language]
+exten => s,1,Noop(Test)
+
+[ivr-main]
+exten => s,1,Noop(Test)
+
+[ivr-main-en]
+exten => s,1,Noop(Test)

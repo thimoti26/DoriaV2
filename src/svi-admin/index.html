@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVI Admin - Interface Simplifiée (Volumes Actifs)</title>
+    <link rel="stylesheet" href="css/svi-simple.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1><i class="fas fa-phone"></i> SVI Admin</h1>
+                <div class="header-actions">
+                    <button id="saveBtn" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Sauvegarder
+                    </button>
+                    <button id="reloadBtn" class="btn btn-secondary">
+                        <i class="fas fa-sync"></i> Recharger
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="toolbox">
+                    <h3><i class="fas fa-tools"></i> Outils</h3>
+                    <div class="tools-list">
+                        <div class="tool-item" data-type="playback" draggable="true">
+                            <i class="fas fa-play"></i>
+                            <span>Lecture Audio</span>
+                        </div>
+                        <div class="tool-item" data-type="menu" draggable="true">
+                            <i class="fas fa-list"></i>
+                            <span>Menu</span>
+                        </div>
+                        <div class="tool-item" data-type="say" draggable="true">
+                            <i class="fas fa-comment"></i>
+                            <span>Dire</span>
+                        </div>
+                        <div class="tool-item" data-type="transfer" draggable="true">
+                            <i class="fas fa-phone-forwarded"></i>
+                            <span>Transfert</span>
+                        </div>
+                        <div class="tool-item" data-type="hangup" draggable="true">
+                            <i class="fas fa-phone-slash"></i>
+                            <span>Raccrocher</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Context Tabs -->
+                <div class="context-tabs">
+                    <button class="tab-btn active" data-context="language">
+                        <i class="fas fa-language"></i> Langue
+                    </button>
+                    <button class="tab-btn" data-context="main_fr">
+                        <i class="fas fa-flag"></i> Menu FR
+                    </button>
+                    <button class="tab-btn" data-context="main_en">
+                        <i class="fas fa-flag"></i> Menu EN
+                    </button>
+                    <button class="tab-btn" data-context="tests">
+                        <i class="fas fa-vial"></i> Tests
+                    </button>
+                </div>
+
+                <!-- Steps Container -->
+                <div class="steps-container" id="sviContainer">
+                    <div class="steps-header">
+                        <h3>Étapes du SVI</h3>
+                        <button id="addStepBtn" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Ajouter Étape
+                        </button>
+                    </div>
+                    
+                    <div id="stepsArea" class="steps-area">
+                        <div class="drop-zone" id="dropZone">
+                            <i class="fas fa-plus-circle"></i>
+                            <p>Glissez un outil ici ou cliquez sur "Ajouter Étape"</p>
+                        </div>
+                        <div id="stepsList" class="steps-list"></div>
+                    </div>
+                </div>
+
+                <!-- Tests Section -->
+                <div class="tests-container" id="testsContainer" style="display: none;">
+                    <div class="tests-header">
+                        <h3><i class="fas fa-vial"></i> Tests Système</h3>
+                        <button id="refreshTestsBtn" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-sync"></i> Actualiser
+                        </button>
+                    </div>
+                    
+                    <div class="tests-content">
+                        <div class="tests-categories">
+                            <div class="test-category">
+                                <h4><i class="fas fa-bug"></i> Tests de Debug</h4>
+                                <div id="debugTests" class="tests-list"></div>
+                            </div>
+                            
+                            <div class="test-category">
+                                <h4><i class="fas fa-network-wired"></i> Tests Réseau</h4>
+                                <div id="networkTests" class="tests-list"></div>
+                            </div>
+                            
+                            <div class="test-category">
+                                <h4><i class="fas fa-phone"></i> Tests SVI</h4>
+                                <div id="sviTests" class="tests-list"></div>
+                            </div>
+                            
+                            <div class="test-category">
+                                <h4><i class="fas fa-server"></i> Tests Système</h4>
+                                <div id="systemTests" class="tests-list"></div>
+                            </div>
+                            
+                            <div class="test-category">
+                                <h4><i class="fas fa-folder"></i> Tests Généraux</h4>
+                                <div id="generalTests" class="tests-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Properties Panel -->
+                <div class="properties-panel" id="propertiesPanel">
+                    <h3><i class="fas fa-cogs"></i> Propriétés</h3>
+                    <div id="propertiesContent" class="properties-content">
+                        <div class="no-selection">
+                            <p>Sélectionnez une étape pour modifier ses propriétés</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Output Panel -->
+                <div class="test-output-panel" id="testOutputPanel" style="display: none;">
+                    <h3><i class="fas fa-terminal"></i> Résultats des Tests</h3>
+                    <div class="test-output-content">
+                        <div class="test-output-header">
+                            <span id="currentTestName">Aucun test en cours</span>
+                            <div class="test-output-actions">
+                                <button id="clearOutputBtn" class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-trash"></i> Effacer
+                                </button>
+                                <button id="stopTestBtn" class="btn btn-sm btn-danger" style="display: none;">
+                                    <i class="fas fa-stop"></i> Arrêter
+                                </button>
+                            </div>
+                        </div>
+                        <div id="testOutput" class="test-output">
+                            <div class="no-output">
+                                <p>Sélectionnez et exécutez un test pour voir les résultats</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Step Modal -->
+    <div id="addStepModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ajouter une Étape</h3>
+                <button class="close-btn" onclick="closeModal('addStepModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="step-types">
+                    <div class="step-type" data-type="playback">
+                        <i class="fas fa-play"></i>
+                        <h4>Lecture Audio</h4>
+                        <p>Jouer un fichier audio</p>
+                    </div>
+                    <div class="step-type" data-type="menu">
+                        <i class="fas fa-list"></i>
+                        <h4>Menu</h4>
+                        <p>Menu avec options</p>
+                    </div>
+                    <div class="step-type" data-type="say">
+                        <i class="fas fa-comment"></i>
+                        <h4>Dire</h4>
+                        <p>Synthèse vocale</p>
+                    </div>
+                    <div class="step-type" data-type="transfer">
+                        <i class="fas fa-phone-forwarded"></i>
+                        <h4>Transfert</h4>
+                        <p>Transférer l'appel</p>
+                    </div>
+                    <div class="step-type" data-type="hangup">
+                        <i class="fas fa-phone-slash"></i>
+                        <h4>Raccrocher</h4>
+                        <p>Terminer l'appel</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addStepModal')">Annuler</button>
+                <button id="confirmAddStep" class="btn btn-primary">Ajouter</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/svi-admin.js"></script>
+</body>
+</html>

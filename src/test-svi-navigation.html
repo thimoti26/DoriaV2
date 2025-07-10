@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Simulateur SVI</title>
+</head>
+<body>
+    <h1>Test de Navigation du Simulateur SVI</h1>
+    <div id="results"></div>
+
+    <script>
+        // Configuration de test
+        const testConfig = {
+            "language": {
+                "s": {"extension": "s", "action": "Noop(Language Selection)", "type": "other", "description": "Sélection de langue"},
+                "1": {"extension": "1", "action": "Noop(French selected)", "type": "other", "description": "Français"},
+                "2": {"extension": "2", "action": "Noop(English selected)", "type": "other", "description": "English"}
+            },
+            "main_fr": {
+                "s": {"extension": "s", "action": "Noop(Main FR)", "type": "other", "description": "Menu principal FR"},
+                "1": {"extension": "1", "action": "Noop(Commercial)", "type": "other", "description": "Commercial"},
+                "8": {"extension": "8", "action": "Noop(Language change)", "type": "other", "description": "Changer de langue"}
+            },
+            "main_en": {
+                "s": {"extension": "s", "action": "Noop(Main EN)", "type": "other", "description": "Menu principal EN"},
+                "1": {"extension": "1", "action": "Noop(Sales)", "type": "other", "description": "Sales"},
+                "8": {"extension": "8", "action": "Noop(Language change)", "type": "other", "description": "Change language"}
+            }
+        };
+
+        // Simulateur simplifié pour test
+        class TestSimulator {
+            constructor() {
+                this.currentContext = 'language';
+                this.currentStep = 's';
+                this.sviConfig = testConfig;
+            }
+
+            executeAction(step) {
+                let nextContext = null;
+                let nextStep = null;
+
+                // Logique de navigation
+                if (this.currentContext === 'language') {
+                    if (step.extension === '1') {
+                        nextContext = 'main_fr';
+                        nextStep = 's';
+                    } else if (step.extension === '2') {
+                        nextContext = 'main_en';
+                        nextStep = 's';
+                    }
+                } else if (this.currentContext.startsWith('main_')) {
+                    if (step.extension === '8') {
+                        nextContext = 'language';
+                        nextStep = 's';
+                    }
+                }
+
+                if (nextContext && nextStep) {
+                    this.currentContext = nextContext;
+                    this.currentStep = nextStep;
+                    return true;
+                }
+                return false;
+            }
+
+            selectOption(stepExtension) {
+                const contextConfig = this.sviConfig[this.currentContext];
+                const step = contextConfig[stepExtension];
+                if (step) {
+                    return this.executeAction(step);
+                }
+                return false;
+            }
+        }
+
+        // Tests
+        function runTests() {
+            const results = document.getElementById('results');
+            const simulator = new TestSimulator();
+            let testResults = [];
+
+            // Test 1: Navigation langue -> français
+            simulator.currentContext = 'language';
+            const test1 = simulator.selectOption('1');
+            testResults.push({
+                test: "Langue -> Français",
+                result: test1 && simulator.currentContext === 'main_fr',
+                expected: 'main_fr',
+                actual: simulator.currentContext
+            });
+
+            // Test 2: Navigation depuis français -> langue
+            const test2 = simulator.selectOption('8');
+            testResults.push({
+                test: "Français -> Langue",
+                result: test2 && simulator.currentContext === 'language',
+                expected: 'language',
+                actual: simulator.currentContext
+            });
+
+            // Test 3: Navigation langue -> anglais
+            const test3 = simulator.selectOption('2');
+            testResults.push({
+                test: "Langue -> Anglais",
+                result: test3 && simulator.currentContext === 'main_en',
+                expected: 'main_en',
+                actual: simulator.currentContext
+            });
+
+            // Afficher les résultats
+            let html = '<h2>Résultats des Tests</h2>';
+            testResults.forEach((test, index) => {
+                const status = test.result ? '✅ PASS' : '❌ FAIL';
+                html += `
+                    <div style="padding: 10px; margin: 5px; border: 1px solid ${test.result ? 'green' : 'red'}">
+                        <strong>Test ${index + 1}: ${test.test}</strong><br>
+                        Status: ${status}<br>
+                        Attendu: ${test.expected}, Obtenu: ${test.actual}
+                    </div>
+                `;
+            });
+
+            results.innerHTML = html;
+        }
+
+        // Lancer les tests au chargement
+        window.onload = runTests;
+    </script>
+</body>
+</html>

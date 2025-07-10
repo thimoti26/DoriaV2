@@ -569,6 +569,43 @@ INSERT INTO voicemail_users (customer_id, context, mailbox, password, fullname, 
 ('2', 'default', '1002', '1002', 'User 1002', 'user1002@doriav2.local'),
 ('3', 'default', '1003', '1003', 'User 1003', 'user1003@doriav2.local');
 
+-- Table pour les historiques d'appels SVI détaillés
+CREATE TABLE IF NOT EXISTS svi_call_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    call_id VARCHAR(32) NOT NULL,  -- LinkedID d'Asterisk
+    caller_number VARCHAR(80) NOT NULL,
+    called_number VARCHAR(80) NOT NULL,
+    call_start DATETIME NOT NULL,
+    call_end DATETIME NULL,
+    total_duration INT DEFAULT 0,  -- Durée totale en secondes
+    call_status ENUM('answered', 'busy', 'no_answer', 'failed', 'hangup') DEFAULT 'answered',
+    hangup_cause VARCHAR(50) DEFAULT '',
+    language_selected VARCHAR(10) DEFAULT '',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX (call_id),
+    INDEX (caller_number),
+    INDEX (call_start)
+);
+
+-- Table pour les étapes du parcours SVI
+CREATE TABLE IF NOT EXISTS svi_call_steps (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    call_id VARCHAR(32) NOT NULL,
+    step_number INT NOT NULL,
+    context_name VARCHAR(80) NOT NULL,
+    extension VARCHAR(20) NOT NULL,
+    step_type ENUM('menu', 'transfer', 'redirect', 'hangup', 'timeout', 'invalid') NOT NULL,
+    audio_played VARCHAR(255) DEFAULT '',
+    user_input VARCHAR(10) DEFAULT '',
+    step_start DATETIME NOT NULL,
+    step_duration INT DEFAULT 0,  -- Durée de l'étape en secondes
+    next_action VARCHAR(100) DEFAULT '',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (call_id) REFERENCES svi_call_history(call_id) ON DELETE CASCADE,
+    INDEX (call_id),
+    INDEX (step_start)
+);
+
 -- Switch back to main database
 USE doriav2;
 

@@ -43,9 +43,11 @@ services:
       retries: 3
       interval: 30s
 
-  # PHP/Apache Web Server (placeholder for future app)
+  # PHP/Apache Web Server
   web:
-    image: php:8.2-apache
+    build: 
+      context: .
+      dockerfile: web/Dockerfile
     container_name: doriav2-web
     restart: unless-stopped
     depends_on:
@@ -63,23 +65,19 @@ services:
     ports:
       - "8080:80"
     volumes:
+      # Code source de l'application (développement)
       - ./src:/var/www/html
+      # Accès aux configurations Asterisk pour SVI Admin
+      - ./asterisk/config:/var/www/html/asterisk-config
+      - ./asterisk/sounds:/var/www/html/asterisk-sounds
       - web_logs:/var/log/apache2
     networks:
       - doriav2_network
-    command: >
-      bash -c "
-      apt-get update &&
-      apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip unzip git &&
-      docker-php-ext-configure gd --with-freetype --with-jpeg &&
-      docker-php-ext-install gd pdo pdo_mysql mysqli &&
-      a2enmod rewrite headers &&
-      echo '<Directory /var/www/html>' >> /etc/apache2/apache2.conf &&
-      echo '  AllowOverride All' >> /etc/apache2/apache2.conf &&
-      echo '</Directory>' >> /etc/apache2/apache2.conf &&
-      echo '<?php phpinfo(); ?>' > /var/www/html/index.php &&
-      apache2-foreground
-      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      timeout: 10s
+      retries: 3
+      interval: 30s
 
 
 
@@ -103,7 +101,7 @@ services:
       - "10000-10100:10000-10100/udp"  # RTP range
     volumes:
       # Points de montage directs pour les fichiers de configuration (modifications en temps réel)
-      - ./asterisk/config/extensions.conf:/etc/asterisk/extensions.conf:ro
+      - ./asterisk/config/extensions.conf:/etc/asterisk/extensions.conf
       - ./asterisk/config/pjsip.conf:/etc/asterisk/pjsip.conf:ro
       - ./asterisk/config/modules.conf:/etc/asterisk/modules.conf:ro
       - ./asterisk/config/asterisk.conf:/etc/asterisk/asterisk.conf:ro

@@ -1,0 +1,33 @@
+; Extensions.conf généré par SVI Admin DoriaV2
+; 2025-07-02 16:01:31
+
+[ivr-language]
+exten => s,1,Noop(Language Selection)
+exten => 1,1,Noop(French language selected)
+exten => 2,1,Noop(English language selected)
+exten => i,1,Noop(Invalid language option)
+exten => t,1,Noop(Language timeout)
+
+[ivr-main]
+exten => s,1,Noop(Entering Main IVR - French)
+exten => 1,1,Noop(Commercial Department - French)
+exten => 2,1,Noop(Technical Support - French)
+exten => 3,1,Noop(Conference Room Access - French)
+exten => 4,1,Noop(Directory - French)
+exten => 8,1,Noop(Change language)
+exten => 9,1,Noop(Return to main menu - French)
+exten => 0,1,Noop(Operator - French)
+exten => i,1,Noop(Invalid option - French)
+exten => t,1,Noop(Timeout - French)
+
+[ivr-main-en]
+exten => s,1,Noop(Entering Main IVR - English)
+exten => 1,1,Noop(Sales Department - English)
+exten => 2,1,Noop(Technical Support - English)
+exten => 3,1,Noop(Conference Room Access - English)
+exten => 4,1,Noop(Directory - English)
+exten => 8,1,Noop(Change language)
+exten => 9,1,Noop(Return to main menu - English)
+exten => 0,1,Noop(Operator - English)
+exten => i,1,Noop(Invalid option - English)
+exten => t,1,Noop(Timeout - English)

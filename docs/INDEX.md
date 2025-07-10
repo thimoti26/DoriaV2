@@ -1,102 +1,53 @@
-# 📚 Documentation DoriaV2
+# Documentation DoriaV2 - Index
 
-## 📖 Index de la Documentation
+## 📁 Structure de la Documentation
 
-### 🚀 Guides de Démarrage
+### 🏗️ Architecture
+- [architecture/](architecture/) - Diagrammes et documentation d'architecture
 
-| Document | Description |
-|----------|-------------|
-| **GUIDE_UTILISATEUR.md** | Guide d'utilisation général de DoriaV2 |
-| **TUTORIEL_LINPHONE.md** | Configuration pas-à-pas de Linphone |
-| **README_FINAL.md** | Résumé complet du projet |
+### 📖 Guides Utilisateur
+- [guides/GUIDE_NAVIGATION_SVI.md](guides/GUIDE_NAVIGATION_SVI.md) - Guide complet de navigation SVI
+- [guides/GUIDE_DRAG_DROP_SVI.md](guides/GUIDE_DRAG_DROP_SVI.md) - Guide du drag & drop ✨ NOUVEAU
+- [guides/CONFIG_VISUALIZATION_GUIDE.md](guides/CONFIG_VISUALIZATION_GUIDE.md) - Visualisation de configuration
+- [guides/GUIDE_SIP_UNREACHABLE.md](guides/GUIDE_SIP_UNREACHABLE.md) - Gestion contacts SIP "Unreachable" ✨ NOUVEAU
 
-### ⚙️ Configuration et Administration
+### 🧪 Tests et Validation
+- [tests/SVI_ADMIN_TEST_RESULTS.md](tests/SVI_ADMIN_TEST_RESULTS.md) - Résultats des tests SVI Admin
+- [tests/TABS_FIX_COMPLETE.md](tests/TABS_FIX_COMPLETE.md) - Correction des onglets
+- [tests/AMELIORATIONS_COMPLETEES.md](tests/AMELIORATIONS_COMPLETEES.md) - Améliorations complétées
+- [tests/DRAG_DROP_FIX_COMPLETE.md](tests/DRAG_DROP_FIX_COMPLETE.md) - Correction drag & drop ✨ NOUVEAU
 
-| Document | Description |
-|----------|-------------|
-| **VOLUMES_CONFIG.md** | Gestion des volumes et configuration à chaud |
-| **SCRIPT_CLEANUP_SUMMARY.md** | Résumé du nettoyage des scripts |
+### 💡 Exemples
+- [examples/EXEMPLE_NAVIGATION_COMPLETE.md](examples/EXEMPLE_NAVIGATION_COMPLETE.md) - Exemple complet de navigation
 
-### 🔧 Dépannage et Maintenance
+## 🚀 Démarrage Rapide
 
-| Document | Description |
-|----------|-------------|
-| **TROUBLESHOOTING_AUDIO.md** | Résolution des problèmes audio |
-| **TROUBLESHOOTING_PJSIP.md** | Correction des erreurs PJSIP |
-| **FIX_SVI_9999.md** | Résolution du problème SVI 9999 |
+1. **Installation**: `docker-compose up -d`
+2. **Interface SVI**: http://localhost:8080/svi-admin/
+3. **Tests**: `./tests/test-final.sh`
 
-### 📱 Guides Spécialisés
+## 🔧 Scripts Utiles
 
-| Document | Description |
-|----------|-------------|
-| **GUIDE_SVI_9999.md** | Guide complet du Serveur Vocal Interactif |
-| **GUIDE_SVI_MULTILINGUAL.md** | 🌐 **SVI Multilingue (FR/EN)** |
-| **TUTORIEL_LINPHONE_SUMMARY.md** | Résumé du tutoriel Linphone |
+- `./scripts/organize-project.sh` - Organisation du projet
+- `./scripts/cleanup.sh` - Nettoyage
+- `./scripts/reload-config.sh` - Rechargement configuration
+- `./scripts/diagnose-sip.sh` - Diagnostic contacts SIP ✨ NOUVEAU
 
-### 📋 Résumés Techniques
+## 🚨 Résolution Rapide
 
-| Document | Description |
-|----------|-------------|
-| **README_VOLUMES.md** | Résumé de la configuration des volumes |
+- [SIP_UNREACHABLE_QUICK_FIX.md](SIP_UNREACHABLE_QUICK_FIX.md) - Messages "Unreachable" normaux ⚡
 
-## 🎯 Guides par Cas d'Usage
+## 📞 Interface SVI Admin
 
-### Je débute avec DoriaV2
-1. **GUIDE_UTILISATEUR.md** - Vue d'ensemble
-2. **TUTORIEL_LINPHONE.md** - Configuration client
-3. **README_FINAL.md** - Résumé complet
+L'interface d'administration SVI est accessible à : http://localhost:8080/svi-admin/
 
-### Je veux configurer Linphone
-1. **TUTORIEL_LINPHONE.md** - Guide détaillé
-2. **TROUBLESHOOTING_PJSIP.md** - Si problèmes de connexion
-
-### J'ai des problèmes audio
-1. **TROUBLESHOOTING_AUDIO.md** - Diagnostic audio
-2. **GUIDE_UTILISATEUR.md** - Extensions de test
-
-### Je veux utiliser le SVI (9999)
-1. **GUIDE_SVI_9999.md** - Guide complet du SVI
-2. **FIX_SVI_9999.md** - Si problèmes d'accès
-
-### Je veux modifier les configurations
-1. **VOLUMES_CONFIG.md** - Gestion des volumes
-2. **SCRIPT_CLEANUP_SUMMARY.md** - Scripts disponibles
-
-### J'administre le serveur
-1. **README_VOLUMES.md** - Architecture des volumes
-2. **TROUBLESHOOTING_*.md** - Guides de dépannage
-
-## 🛠️ Scripts Associés
-
-Les scripts sont organisés dans deux dossiers :
-
-### 🧪 Tests (`../tests/`)
-| Script | Documentation |
-|--------|---------------|
-| `test-stack.sh` | Test complet de la stack |
-| `test-linphone.sh` | TUTORIEL_LINPHONE.md |
-| `test-audio-auto.sh` | TROUBLESHOOTING_AUDIO.md |
-| `debug-audio.sh` | Monitoring temps réel |
-| `test-network.sh` | Test connectivité |
-| `test-volumes.sh` | README_VOLUMES.md |
-
-### 🛠️ Utilitaires (`../scripts/`)
-| Script | Documentation |
-|--------|---------------|
-| `reload-config.sh` | VOLUMES_CONFIG.md |
-| `update-volumes.sh` | Gestion des volumes |
-| `cleanup.sh` | SCRIPT_CLEANUP_SUMMARY.md |
-
-## 📞 Support
-
-Pour toute question :
-1. Consultez le guide correspondant ci-dessus
-2. Utilisez les scripts de test dans `../tests/`
-3. Utilisez les scripts utilitaires dans `../scripts/`  
-4. Vérifiez les logs avec `../doria.sh debug-audio`
+### Fonctionnalités Principales:
+- ✅ Éditeur visuel de flux SVI
+- ✅ Drag & drop des actions
+- ✅ Simulation de parcours
+- ✅ Génération automatique extensions.conf
+- ✅ Upload de fichiers audio
+- ✅ Gestion multilingue
 
 ---
-
-💡 **Conseil** : Commencez par le **GUIDE_UTILISATEUR.md** pour une vue d'ensemble, puis consultez les guides spécialisés selon vos besoins.
-
-📁 **Structure** : Consultez `../ARCHITECTURE.md` pour l'architecture complète du projet.
+*Dernière mise à jour: 3 juillet 2025*

@@ -49,6 +49,7 @@ TESTS ET VALIDATION:
     test-svi            Test SVI multilingue (français/anglais)
     test-svi-nav        Test navigation SVI interactif
     test-svi-paths      Test automatique de tous les chemins SVI
+    svi-admin           Ouvrir l'interface d'administration SVI
 
 MAINTENANCE:
     debug-audio         Monitoring audio en temps réel
@@ -163,6 +164,16 @@ case "${1:-help}" in
     "test-svi-paths")
         check_test_exists "test-svi-paths.sh"
         "$TESTS_DIR/test-svi-paths.sh"
+        ;;
+    "svi-admin")
+        log_info "🌐 Ouverture de l'interface SVI Admin..."
+        if command -v open &> /dev/null; then
+            open "http://localhost:8080/svi-admin/"
+        elif command -v xdg-open &> /dev/null; then
+            xdg-open "http://localhost:8080/svi-admin/"
+        else
+            log_info "Interface SVI Admin disponible à: http://localhost:8080/svi-admin/"
+        fi
         ;;
     "debug-audio")
         check_test_exists "debug-audio.sh"
