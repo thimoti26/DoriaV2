@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Utilisateurs SIP - DoriaV2</title>
+    <link rel="stylesheet" href="css/svi-admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .user-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .user-id {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .user-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .status-online {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .user-info {
+            margin-bottom: 15px;
+        }
+        
+        .user-info div {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-edit {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 10px;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .btn-add {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-reload {
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .alert {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1><i class="fas fa-phone"></i> SVI Admin</h1>
+                <nav class="header-nav">
+                    <a href="flow-editor.html" class="nav-link">
+                        <i class="fas fa-sitemap"></i> Éditeur de Flux
+                    </a>
+                    <a href="users-management.html" class="nav-link active">
+                        <i class="fas fa-users"></i> Utilisateurs SIP
+                    </a>
+                </nav>
+                <div class="header-actions">
+                    <span style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Gestion des comptes Linphone</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="container">
+                <div class="header">
+                    <h1><i class="fas fa-users"></i> Gestion des Utilisateurs SIP</h1>
+                    <p>Administration des comptes Linphone et utilisateurs SIP</p>
+                </div>
+
+                <div class="alert alert-success" id="successAlert"></div>
+                <div class="alert alert-error" id="errorAlert"></div>
+
+                <div class="header-actions">
+                    <div>
+                        <button class="btn-add" onclick="openAddUserModal()">
+                            <i class="fas fa-plus"></i> Ajouter un utilisateur
+                        </button>
+                        <button class="btn-reload" onclick="reloadAsteriskConfig()">
+                            <i class="fas fa-sync-alt"></i> Recharger Asterisk
+                        </button>
+                    </div>
+                    <div>
+                        <span id="userCount">0 utilisateurs</span>
+                    </div>
+                </div>
+
+                <div id="loadingDiv" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Chargement des utilisateurs...
+                </div>
+
+                <div id="usersContainer" class="users-grid" style="display: none;">
+                    <!-- Les utilisateurs seront chargés ici -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal pour ajouter/éditer un utilisateur -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeUserModal()">&times;</span>
+            <h2 id="modalTitle">Ajouter un utilisateur</h2>
+            <form id="userForm">
+                <input type="hidden" id="originalUserId" value="">
+                
+                <div class="form-group">
+                    <label for="userId">ID Utilisateur (ex: 1001)</label>
+                    <input type="text" id="userId" name="userId" required pattern="[0-9]+" 
+                           placeholder="1001" title="Numéro d'utilisateur uniquement">
+                </div>
+                
+                <div class="form-group">
+                    <label for="displayName">Nom d'affichage</label>
+                    <input type="text" id="displayName" name="displayName" required 
+                           placeholder="User 1001">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required 
+                           placeholder="Mot de passe SIP">
+                </div>
+                
+                <div class="form-group">
+                    <label for="context">Contexte (optionnel)</label>
+                    <input type="text" id="context" name="context" 
+                           placeholder="from-internal" value="from-internal">
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeUserModal()">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/users-management.js"></script>
+</body>
+</html>

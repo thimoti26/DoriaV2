@@ -1,0 +1,187 @@
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f8fafc;
+}
+
+.app-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+// Styles globaux des boutons
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  &.btn-primary {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #2563eb;
+      border-color: #2563eb;
+    }
+  }
+  
+  &.btn-secondary {
+    background: #6b7280;
+    border-color: #6b7280;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #4b5563;
+      border-color: #4b5563;
+    }
+  }
+  
+  &.btn-success {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #059669;
+      border-color: #059669;
+    }
+  }
+  
+  &.btn-danger {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #dc2626;
+      border-color: #dc2626;
+    }
+  }
+  
+  &.btn-warning {
+    background: #f59e0b;
+    border-color: #f59e0b;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #d97706;
+      border-color: #d97706;
+    }
+  }
+  
+  &.btn-outline {
+    background: transparent;
+    
+    &.btn-primary {
+      color: #3b82f6;
+      border-color: #3b82f6;
+      
+      &:hover:not(:disabled) {
+        background: #3b82f6;
+        color: white;
+      }
+    }
+    
+    &.btn-danger {
+      color: #ef4444;
+      border-color: #ef4444;
+      
+      &:hover:not(:disabled) {
+        background: #ef4444;
+        color: white;
+      }
+    }
+  }
+  
+  &.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  
+  &.btn-lg {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+}
+
+// Animations globales
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+// Utilitaires de responsive
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .show-on-mobile-only {
+    display: none !important;
+  }
+}

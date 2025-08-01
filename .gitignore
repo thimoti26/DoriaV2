@@ -33,3 +33,17 @@ cache/
 # Volumes Docker (données persistantes)
 mysql_data/
 redis_data/
+
+# Node modules
+node_modules/
+
+# Angular
+angular-svi-editor/dist/
+angular-svi-editor/.angular/
+
+# Tests temporaires
+test_*.html
+*test_interface_moderne_*.html
+
+# Fichiers de sauvegarde avec timestamp
+*.backup-*

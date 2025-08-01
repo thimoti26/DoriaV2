@@ -1,0 +1,30 @@
+<div class="flow-editor">
+  <header class="editor-toolbar">
+    <h1>{{ currentFlow?.name || 'Éditeur SVI Moderne' }}</h1>
+    <div class="toolbar-actions">
+      <button class="btn btn-primary" (click)="saveFlow()" [disabled]="!currentFlow">
+        💾 Sauvegarder
+      </button>
+      <button class="btn btn-success" (click)="testFlow()" [disabled]="!currentFlow">
+        ▶ Tester
+      </button>
+    </div>
+  </header>
+
+  <div class="editor-container">
+    <!-- Palette des nœuds -->
+    <aside class="node-palette-sidebar">
+      <app-node-palette></app-node-palette>
+    </aside>
+    
+    <!-- Zone de travail principale -->
+    <main class="main-content">
+      <app-flow-canvas></app-flow-canvas>
+    </main>
+
+    <!-- Panneau des propriétés -->
+    <aside class="properties-panel-sidebar">
+      <app-properties-panel></app-properties-panel>
+    </aside>
+  </div>
+</div>

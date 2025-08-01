@@ -1,0 +1,85 @@
+.node-palette {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.palette-header {
+  margin-bottom: 16px;
+  
+  h3 {
+    margin: 0;
+    color: #333;
+    font-weight: 500;
+  }
+}
+
+.palette-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.node-list {
+  padding: 0;
+}
+
+.node-item {
+  margin-bottom: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  border-left: 4px solid;
+  background: white;
+  cursor: grab;
+  transition: all 0.2s ease;
+  position: relative;
+  
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+  }
+  
+  &.cdk-drag-dragging {
+    cursor: grabbing;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    transform: rotate(5deg);
+  }
+}
+
+.node-label {
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+}
+
+.node-description {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.drag-handle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.node-item:hover .drag-handle {
+  opacity: 1;
+}
+
+// Placeholder pour le drag
+.cdk-drag-placeholder {
+  opacity: 0.5;
+  background: #f5f5f5;
+  border: 2px dashed #ccc;
+}
+
+// Style pendant le drag
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

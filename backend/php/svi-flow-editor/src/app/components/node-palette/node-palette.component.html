@@ -1,0 +1,25 @@
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h3>Palette de Nœuds</h3>
+  </div>
+  <div class="sidebar-content">
+    <div class="node-list">
+      <div 
+        *ngFor="let nodeType of nodeTypes"
+        class="node-item"
+        draggable="true"
+        (dragstart)="onDragStart($event, nodeType)"
+        (dragend)="onDragEnd($event)">
+        
+        <div class="node-icon" [ngClass]="nodeType.type">
+          {{nodeType.icon}}
+        </div>
+        
+        <div class="node-info">
+          <div class="node-label">{{nodeType.label}}</div>
+          <div class="node-description">{{nodeType.description}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -56,38 +56,60 @@ cd DoriaV2
 - **Dashboard principal** : http://localhost:8080/
 - **Statut système** : http://localhost:8080/system-status.html
 
-## 📁 Structure du projet
+## 🏗️ DoriaV2 - Plateforme SVI Complète
+
+## 📁 Structure du Projet
 
 ```
 DoriaV2/
-├── 📄 README.md                    # Ce fichier
-├── 📄 ARCHITECTURE.md              # Architecture technique détaillée
-├── 📄 compose.yml                  # Configuration Docker Compose
-├── 🔧 doria.sh                     # Script principal de gestion
-├── 📂 src/                         # Code source de l'application
-│   ├── 📂 svi-admin/              # Interface d'administration SVI
-│   │   ├── 📄 index.php           # Page principale
-│   │   ├── 📂 api/                # API backend PHP
-│   │   ├── 📂 css/                # Styles et thèmes
-│   │   ├── 📂 js/                 # Scripts JavaScript
-│   │   └── 📂 uploads/            # Fichiers audio téléchargés
-│   └── 📄 [autres fichiers web]
-├── 📂 asterisk/                   # Configuration et sons Asterisk
-│   ├── 📂 config/                 # Fichiers de configuration
-│   └── 📂 sounds/                 # Fichiers audio multilingues
-├── 📂 mysql/                      # Configuration base de données
-├── 📂 scripts/                    # Scripts utilitaires et maintenance
-├── 📂 tests/                      # Tests organisés par catégorie
-│   ├── 📂 svi/                    # Tests SVI spécifiques
-│   ├── 📂 network/                # Tests réseau et connectivité
-│   ├── 📂 system/                 # Tests système complets
-│   └── 📂 debug/                  # Scripts de débogage
-├── 📂 docs/                       # Documentation organisée
-│   ├── 📂 guides/                 # Guides d'utilisation
-│   ├── 📂 examples/               # Exemples concrets
-│   ├── 📂 tests/                  # Résultats de tests
-│   └── 📂 architecture/           # Documentation technique
-└── 📂 archive/                    # Anciens fichiers archivés
+├── 📄 compose.yml              # Configuration Docker Compose principale
+├── � doria.sh                 # Script principal d'entrée
+│
+├── 📂 frontend/                # Applications Frontend
+│   ├── angular/                # Éditeur SVI Angular moderne
+│   │   ├── src/                # Code source TypeScript
+│   │   ├── Dockerfile          # Container de développement
+│   │   ├── Dockerfile.nginx    # Container de production
+│   │   └── README.md           # Documentation Angular
+│   └── README.md               # Documentation Frontend
+│
+├── 📂 backend/                 # Applications Backend
+│   ├── php/                    # Code PHP/API
+│   │   ├── svi-admin/          # Interface d'administration
+│   │   ├── api/                # API REST
+│   │   └── index.php           # Point d'entrée
+│   ├── Dockerfile              # Container PHP + Apache
+│   └── README.md               # Documentation Backend
+│
+├── 📂 asterisk/               # Configuration Asterisk
+├── 📂 mysql/                  # Configuration MySQL
+├── 📂 docs/                   # Documentation complète
+├── 📂 tests/                  # Tests et diagnostics
+└── 📂 scripts/               # Scripts d'administration
+```
+
+## � Démarrage Rapide
+
+### Stack Complète (recommandé)
+```bash
+./doria.sh
+# Accès :
+# - SVI Admin : http://localhost:8080
+# - Éditeur Angular : via docker-compose-angular.yml
+```
+
+### Frontend Angular uniquement
+```bash
+cd frontend/angular
+npm install
+npm start
+# Accès : http://localhost:4200
+```
+
+### Backend PHP uniquement
+```bash
+docker-compose up web mysql redis
+# Accès : http://localhost:8080
 ```
 
 ## 📚 Documentation

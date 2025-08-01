@@ -1,0 +1,87 @@
+.flow-editor {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Roboto', Arial, sans-serif;
+}
+
+.editor-toolbar {
+  background: #1976d2;
+  color: white;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  
+  h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+  }
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  &.btn-primary {
+    background: #2196f3;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #1976d2;
+    }
+  }
+  
+  &.btn-success {
+    background: #4caf50;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #388e3c;
+    }
+  }
+}
+
+.editor-container {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.node-palette-sidebar {
+  width: 300px;
+  background: #fafafa;
+  border-right: 1px solid #e0e0e0;
+  overflow-y: auto;
+}
+
+.properties-panel-sidebar {
+  width: 350px;
+  background: #fafafa;
+  border-left: 1px solid #e0e0e0;
+  overflow-y: auto;
+}
+
+.main-content {
+  flex: 1;
+  background: #f5f5f5;
+  position: relative;
+  overflow: hidden;
+}

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Éditeur de Flux SVI - DoriaV2</title>
+    <link rel="stylesheet" href="css/svi-admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        .flow-editor {
+            display: flex;
+            height: calc(100vh - 80px);
+            background: #f8f9fa;
+        }
+        
+        .tools-panel {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+        
+        .tools-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .tools-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .tools-categories {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .tool-category {
+            margin-bottom: 10px;
+        }
+        
+        .category-header {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .category-header:hover {
+            background: #e9ecef;
+        }
+        
+        .category-items {
+            padding: 10px 0;
+        }
+        
+        .tool-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            cursor: grab;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .tool-item:hover {
+            background: #f8f9fa;
+            border-left-color: #667eea;
+            transform: translateX(2px);
+        }
+        
+        .tool-item:active {
+            cursor: grabbing;
+        }
+        
+        .tool-item.dragging {
+            opacity: 0.5;
+        }
+        
+        .canvas-container.drag-over {
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+        
+        @keyframes highlight {
+            0% { background-color: rgba(102, 126, 234, 0.1); }
+            50% { background-color: rgba(102, 126, 234, 0.3); }
+            100% { background-color: rgba(102, 126, 234, 0.1); }
+        }
+        
+        .tool-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .tool-start .tool-icon { background: #28a745; }
+        .tool-menu .tool-icon { background: #007bff; }
+        .tool-say .tool-icon { background: #17a2b8; }
+        .tool-input .tool-icon { background: #fd7e14; }
+        .tool-transfer .tool-icon { background: #6f42c1; }
+        .tool-hangup .tool-icon { background: #dc3545; }
+        .tool-condition .tool-icon { background: #ffc107; color: #212529; }
+        
+        .tool-info {
+            flex: 1;
+        }
+        
+        .tool-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #212529;
+        }
+        
+        .tool-desc {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            background: #ffffff;
+            min-height: 600px;
+            height: 100%;
+        }
+        
+        .canvas-toolbar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+        
+        .toolbar-btn {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .toolbar-btn:hover {
+            background: #f8f9fa;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .properties-panel {
+            width: 350px;
+            background: white;
+            border-left: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+        }
+        
+        .properties-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            color: white;
+        }
+        
+        .properties-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .properties-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .property-group {
+            margin-bottom: 25px;
+        }
+        
+        .property-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+        
+        .property-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+        
+        .property-input:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .property-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .property-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 10px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+        
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .canvas-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background-image: 
+                linear-gradient(#000 1px, transparent 1px),
+                linear-gradient(90deg, #000 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+        
+        .generation-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+        }
+        
+        .btn-generate {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+        }
+
+        /* Mode sombre */
+        .dark-mode {
+            background: #1a1a1a;
+            color: #e9ecef;
+        }
+
+        .dark-mode .flow-editor {
+            background: #2d3748;
+        }
+
+        .dark-mode .tools-panel {
+            background: #2d3748;
+            border-right-color: #4a5568;
+        }
+
+        .dark-mode .tools-header {
+            background: linear-gradient(135deg, #4a5568, #2d3748);
+        }
+
+        .dark-mode .category-header {
+            background: #4a5568;
+            color: #e9ecef;
+        }
+
+        .dark-mode .tool-item {
+            background: #3a4553;
+            border-color: #4a5568;
+            color: #e9ecef;
+        }
+
+        .dark-mode .tool-item:hover {
+            background: #4a5568;
+            border-color: #667eea;
+        }
+
+        .dark-mode .tool-name {
+            color: #e9ecef;
+        }
+
+        .dark-mode .tool-desc {
+            color: #a0aec0;
+        }
+
+        .dark-mode .canvas-container {
+            background: #1a1a1a;
+        }
+
+        .dark-mode .toolbar-btn {
+            background: #3a4553;
+            border-color: #4a5568;
+            color: #e9ecef;
+        }
+
+        .dark-mode .toolbar-btn:hover {
+            background: #4a5568;
+            border-color: #667eea;
+        }
+
+        .dark-mode .properties-panel {
+            background: #2d3748;
+            border-left-color: #4a5568;
+        }
+
+        .dark-mode .properties-header {
+            background: linear-gradient(135deg, #4a5568, #2d3748);
+        }
+
+        .dark-mode .property-label {
+            color: #e9ecef;
+        }
+
+        .dark-mode .property-input {
+            background: #3a4553;
+            border-color: #4a5568;
+            color: #e9ecef;
+        }
+
+        .dark-mode .property-input:focus {
+            border-color: #667eea;
+            background: #4a5568;
+        }
+
+        .dark-mode .property-select {
+            background: #3a4553;
+            color: #e9ecef;
+        }
+
+        .dark-mode .empty-state {
+            color: #a0aec0;
+        }
+
+        .dark-mode .btn-generate {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+        }
+
+        .dark-mode .btn-save {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+        }
+
+        /* Animation de transition pour le mode sombre */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Système d'infobulles */
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 10000;
+            max-width: 300px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid rgba(0, 0, 0, 0.9);
+        }
+
+        .tooltip-title {
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #667eea;
+        }
+
+        .tooltip-description {
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .tooltip-config {
+            font-size: 12px;
+            color: #aaa;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 6px;
+            margin-top: 6px;
+        }
+
+        /* Mode sombre pour les infobulles */
+        .dark-mode .tooltip {
+            background: rgba(20, 20, 20, 0.95);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .dark-mode .tooltip::after {
+            border-top-color: rgba(20, 20, 20, 0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1><i class="fas fa-phone"></i> SVI Admin</h1>
+                <nav class="header-nav">
+                    <a href="flow-editor.html" class="nav-link active">
+                        <i class="fas fa-sitemap"></i> Éditeur de Flux
+                    </a>
+                    <a href="users-management.html" class="nav-link">
+                        <i class="fas fa-users"></i> Utilisateurs SIP
+                    </a>
+                </nav>
+                <div class="header-actions">
+                    <span style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Conception de flux SVI interactif</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Flow Editor -->
+        <div class="flow-editor">
+            <!-- Tools Panel -->
+            <div class="tools-panel">
+                <div class="tools-header">
+                    <h3><i class="fas fa-toolbox"></i> Éléments SVI</h3>
+                </div>
+                
+                <div class="tools-categories">
+                    <!-- Début/Fin -->
+                    <div class="tool-category">
+                        <div class="category-header">
+                            <i class="fas fa-flag"></i>
+                            Début / Fin
+                        </div>
+                        <div class="category-items">
+                            <div class="tool-item tool-start" data-type="start">
+                                <div class="tool-icon"><i class="fas fa-play"></i></div>
+                                <div class="tool-info">
+                                    <div class="tool-name">Début</div>
+                                    <div class="tool-desc">Point d'entrée du flux</div>
+                                </div>
+                            </div>
+                            <div class="tool-item tool-hangup" data-type="hangup">
+                                <div class="tool-icon"><i class="fas fa-phone-slash"></i></div>
+                                <div class="tool-info">
+                                    <div class="tool-name">Raccrocher</div>
+                                    <div class="tool-desc">Terminer l'appel</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions Vocales -->
+                    <div class="tool-category">
+                        <div class="category-header">
+                            <i class="fas fa-volume-up"></i>
+                            Actions Vocales
+                        </div>
+                        <div class="category-items">
+                            <div class="tool-item tool-say" data-type="say">
+                                <div class="tool-icon"><i class="fas fa-comment"></i></div>
+                                <div class="tool-info">
+                                    <div class="tool-name">Message Vocal</div>
+                                    <div class="tool-desc">Lire un message à l'appelant</div>
+                                </div>
+                            </div>
+                            <div class="tool-item tool-menu" data-type="menu">
+                                <div class="tool-icon"><i class="fas fa-list"></i></div>
+                                <div class="tool-info">
+                                    <div class="tool-name">Menu DTMF</div>
+                                    <div class="tool-desc">Menu avec choix numériques</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactions -->
+                    <div class="tool-category">
+                        <div class="category-header">
+                            <i class="fas fa-keyboard"></i>
+                            Interactions
+                        </div>
+                        <div class="category-items">
+                            <div class="tool-item tool-input" data-type="input">
+                                <div class="tool-icon"><i class="fas fa-keyboard"></i></div>
+                                <div class="tool-info">
+                                    <div class="tool-name">Saisie DTMF</div>
+                                    <div class="tool-desc">Collecter une saisie utilisateur</div>
+                                </div>
+                            </div>
+                            <div class="tool-item tool-condition" data-type="condition">
+                                <div class="tool-icon"><i class="fas fa-question"></i></div>
+                                <div class="tool-info">
+                                    <div class="tool-name">Condition</div>
+                                    <div class="tool-desc">Branchement conditionnel</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="tool-category">
+                        <div class="category-header">
+                            <i class="fas fa-cogs"></i>
+                            Actions
+                        </div>
+                        <div class="category-items">
+                            <div class="tool-item tool-transfer" data-type="transfer">
+                                <div class="tool-icon"><i class="fas fa-phone-forwarded"></i></div>
+                                <div class="tool-info">
+                                    <div class="tool-name">Transfert</div>
+                                    <div class="tool-desc">Transférer vers un numéro</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="canvas-container">
+                <div class="canvas-grid"></div>
+                <div class="canvas-toolbar">
+                    <button class="toolbar-btn" id="zoomIn" title="Zoom avant">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button class="toolbar-btn" id="zoomOut" title="Zoom arrière">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <button class="toolbar-btn" id="resetZoom" title="Réinitialiser le zoom">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    <button class="toolbar-btn" id="clearCanvas" title="Effacer le canvas">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="toolbar-btn" id="cancelSelection" title="Annuler la sélection de connexion en cours">
+                        <i class="fas fa-times-circle"></i>
+                    </button>
+                    <button class="toolbar-btn" id="toggleDebug" title="Afficher/Masquer les zones de connexion">
+                        <i class="fas fa-bug"></i>
+                    </button>
+                    <button class="toolbar-btn" id="toggleDarkMode" title="Basculer en mode sombre">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+                <div id="canvas-container"></div>
+            </div>
+
+            <!-- Properties Panel -->
+            <div class="properties-panel">
+                <div class="properties-header">
+                    <h3><i class="fas fa-cog"></i> Propriétés</h3>
+                </div>
+                
+                <div class="properties-content" id="properties-content">
+                    <div class="empty-state">
+                        <i class="fas fa-mouse-pointer"></i>
+                        <h4>Aucun élément sélectionné</h4>
+                        <p>Cliquez sur un élément du diagramme pour afficher ses propriétés.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generation Panel -->
+        <div class="generation-panel">
+            <button class="btn-save" id="saveFlow">
+                <i class="fas fa-save"></i> Sauvegarder
+            </button>
+            <button class="btn-generate" id="generateAsterisk">
+                <i class="fas fa-code"></i> Générer Code
+            </button>
+            <button class="btn-generate" id="deployFlow" style="background: linear-gradient(135deg, #fd7e14, #e83e8c);">
+                <i class="fas fa-rocket"></i> Déployer
+            </button>
+        </div>
+    </div>
+
+    <script src="js/flow-editor.js"></script>
+</body>
+</html>

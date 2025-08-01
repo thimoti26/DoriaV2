@@ -1,0 +1,194 @@
+<div class="properties-panel">
+  <div class="panel-header">
+    <h3>Propriétés</h3>
+  </div>
+  
+  <div class="panel-content" *ngIf="selectedNode; else noSelection">
+    <mat-card class="node-info-card">
+      <mat-card-header>
+        <div mat-card-avatar class="node-avatar" [style.background-color]="getNodeColor()">
+          <mat-icon>{{ getNodeIcon() }}</mat-icon>
+        </div>
+        <mat-card-title>{{ selectedNode.label }}</mat-card-title>
+        <mat-card-subtitle>{{ getNodeTypeName() }}</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+
+    <form class="properties-form" (ngSubmit)="saveProperties()">
+      <!-- Propriétés générales -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nom du nœud</mat-label>
+        <input matInput [(ngModel)]="selectedNode.label" name="label">
+      </mat-form-field>
+
+      <!-- Propriétés spécifiques par type de nœud -->
+      <div [ngSwitch]="selectedNode.type">
+        
+        <!-- Menu SVI -->
+        <div *ngSwitchCase="'menu'" class="type-specific-properties">
+          <h4>Configuration du menu</h4>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Message d'accueil</mat-label>
+            <textarea matInput [(ngModel)]="selectedNode.data.welcomeMessage" name="welcomeMessage" rows="3"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre maximum de tentatives</mat-label>
+            <input matInput type="number" [(ngModel)]="selectedNode.data.maxAttempts" name="maxAttempts" min="1" max="5">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Timeout (secondes)</mat-label>
+            <input matInput type="number" [(ngModel)]="selectedNode.data.timeout" name="timeout" min="1" max="60">
+          </mat-form-field>
+
+          <!-- Options du menu -->
+          <div class="menu-options">
+            <h5>Options du menu</h5>
+            <div *ngFor="let option of getMenuOptions(); let i = index" class="menu-option">
+              <mat-form-field appearance="outline">
+                <mat-label>Touche</mat-label>
+                <input matInput [(ngModel)]="option.key" [name]="'optionKey' + i" maxlength="1">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Description</mat-label>
+                <input matInput [(ngModel)]="option.description" [name]="'optionDesc' + i">
+              </mat-form-field>
+              <button mat-icon-button type="button" (click)="removeMenuOption(i)" color="warn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+            <button mat-stroked-button type="button" (click)="addMenuOption()">
+              <mat-icon>add</mat-icon> Ajouter une option
+            </button>
+          </div>
+        </div>
+
+        <!-- Action -->
+        <div *ngSwitchCase="'action'" class="type-specific-properties">
+          <h4>Configuration de l'action</h4>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Type d'action</mat-label>
+            <mat-select [(ngModel)]="selectedNode.data.actionType" name="actionType">
+              <mat-option value="playback">Lecture audio</mat-option>
+              <mat-option value="record">Enregistrement</mat-option>
+              <mat-option value="dtmf">Collecte DTMF</mat-option>
+              <mat-option value="database">Requête base de données</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width" *ngIf="selectedNode.data.actionType === 'playback'">
+            <mat-label>Fichier audio</mat-label>
+            <input matInput [(ngModel)]="selectedNode.data.audioFile" name="audioFile">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width" *ngIf="selectedNode.data.actionType === 'record'">
+            <mat-label>Durée maximale (secondes)</mat-label>
+            <input matInput type="number" [(ngModel)]="selectedNode.data.maxDuration" name="maxDuration">
+          </mat-form-field>
+        </div>
+
+        <!-- Condition -->
+        <div *ngSwitchCase="'condition'" class="type-specific-properties">
+          <h4>Configuration de la condition</h4>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Variable à tester</mat-label>
+            <input matInput [(ngModel)]="selectedNode.data.variable" name="variable">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Opérateur</mat-label>
+            <mat-select [(ngModel)]="selectedNode.data.operator" name="operator">
+              <mat-option value="equals">Égal à</mat-option>
+              <mat-option value="notEquals">Différent de</mat-option>
+              <mat-option value="contains">Contient</mat-option>
+              <mat-option value="greaterThan">Supérieur à</mat-option>
+              <mat-option value="lessThan">Inférieur à</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Valeur de comparaison</mat-label>
+            <input matInput [(ngModel)]="selectedNode.data.value" name="value">
+          </mat-form-field>
+        </div>
+
+        <!-- Transfert -->
+        <div *ngSwitchCase="'transfer'" class="type-specific-properties">
+          <h4>Configuration du transfert</h4>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Type de transfert</mat-label>
+            <mat-select [(ngModel)]="selectedNode.data.transferType" name="transferType">
+              <mat-option value="blind">Transfert aveugle</mat-option>
+              <mat-option value="attended">Transfert surveillé</mat-option>
+              <mat-option value="queue">File d'attente</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Destination</mat-label>
+            <input matInput [(ngModel)]="selectedNode.data.destination" name="destination">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Timeout (secondes)</mat-label>
+            <input matInput type="number" [(ngModel)]="selectedNode.data.timeout" name="transferTimeout">
+          </mat-form-field>
+        </div>
+
+        <!-- Démarrage -->
+        <div *ngSwitchCase="'start'" class="type-specific-properties">
+          <h4>Configuration du démarrage</h4>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Message d'accueil</mat-label>
+            <textarea matInput [(ngModel)]="selectedNode.data.welcomeMessage" name="startWelcome" rows="2"></textarea>
+          </mat-form-field>
+        </div>
+
+        <!-- Fin -->
+        <div *ngSwitchCase="'end'" class="type-specific-properties">
+          <h4>Configuration de fin</h4>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Message de fin</mat-label>
+            <textarea matInput [(ngModel)]="selectedNode.data.goodbyeMessage" name="goodbyeMessage" rows="2"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Action après message</mat-label>
+            <mat-select [(ngModel)]="selectedNode.data.endAction" name="endAction">
+              <mat-option value="hangup">Raccrocher</mat-option>
+              <mat-option value="return">Retourner au menu principal</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Boutons d'action -->
+      <div class="action-buttons">
+        <button mat-raised-button color="primary" type="submit">
+          <mat-icon>save</mat-icon> Sauvegarder
+        </button>
+        <button mat-button type="button" (click)="resetProperties()">
+          <mat-icon>refresh</mat-icon> Réinitialiser
+        </button>
+        <button mat-button type="button" (click)="deleteNode()" color="warn">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <ng-template #noSelection>
+    <div class="no-selection">
+      <mat-icon class="large-icon">touch_app</mat-icon>
+      <h4>Aucun nœud sélectionné</h4>
+      <p>Cliquez sur un nœud dans le canvas pour voir ses propriétés</p>
+    </div>
+  </ng-template>
+</div>

@@ -47,7 +47,7 @@ services:
   web:
     build: 
       context: .
-      dockerfile: web/Dockerfile
+      dockerfile: backend/Dockerfile
     container_name: doriav2-web
     restart: unless-stopped
     depends_on:
@@ -66,10 +66,14 @@ services:
       - "8080:80"
     volumes:
       # Code source de l'application (développement)
-      - ./src:/var/www/html
+      - ./backend/php:/var/www/html
       # Accès aux configurations Asterisk pour SVI Admin
       - ./asterisk/config:/var/www/html/asterisk-config
       - ./asterisk/sounds:/var/www/html/asterisk-sounds
+      # Accès aux tests pour l'interface d'administration
+      - ./tests:/var/www/tests
+      # Répertoire pour sauvegarder les flux SVI
+      - ./flows:/var/www/html/flows
       - web_logs:/var/log/apache2
     networks:
       - doriav2_network

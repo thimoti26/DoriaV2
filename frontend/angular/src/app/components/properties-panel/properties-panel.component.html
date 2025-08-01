@@ -1,0 +1,196 @@
+<div class="properties-panel">
+  <div class="panel-header">
+    <h3>Propriétés</h3>
+  </div>
+  
+  <div class="panel-content" *ngIf="selectedNode; else noSelection">
+    <div class="node-info-card">
+      <div class="node-header">
+        <div class="node-avatar" [style.background-color]="getNodeColor()">
+          <span class="node-icon">{{ getNodeIcon() }}</span>
+        </div>
+        <div class="node-title">
+          <h4>{{ selectedNode.label }}</h4>
+          <span class="node-subtitle">{{ getNodeTypeName() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="properties-form" (ngSubmit)="saveProperties()">
+      <!-- Propriétés générales -->
+      <div class="form-field">
+        <label>Nom du nœud</label>
+        <input type="text" [(ngModel)]="selectedNode.label" name="label" class="form-input">
+      </div>
+
+      <!-- Propriétés spécifiques par type de nœud -->
+      <div [ngSwitch]="selectedNode.type">
+        
+        <!-- Menu SVI -->
+        <div *ngSwitchCase="'menu'" class="type-specific-properties">
+          <h4>Configuration du menu</h4>
+          
+          <div class="form-field">
+            <label>Message d'accueil</label>
+            <textarea [(ngModel)]="selectedNode.data.welcomeMessage" name="welcomeMessage" rows="3" class="form-textarea"></textarea>
+          </div>
+
+          <div class="form-field">
+            <label>Nombre maximum de tentatives</label>
+            <input type="number" [(ngModel)]="selectedNode.data.maxAttempts" name="maxAttempts" min="1" max="5" class="form-input">
+          </div>
+
+          <div class="form-field">
+            <label>Timeout (secondes)</label>
+            <input type="number" [(ngModel)]="selectedNode.data.timeout" name="timeout" min="1" max="60" class="form-input">
+          </div>
+
+          <!-- Options du menu -->
+          <div class="menu-options">
+            <h5>Options du menu</h5>
+            <div *ngFor="let option of getMenuOptions(); let i = index" class="menu-option">
+              <div class="form-field">
+                <label>Touche</label>
+                <input type="text" [(ngModel)]="option.key" [name]="'optionKey' + i" maxlength="1" class="form-input">
+              </div>
+              <div class="form-field">
+                <label>Description</label>
+                <input type="text" [(ngModel)]="option.description" [name]="'optionDesc' + i" class="form-input">
+              </div>
+              <button type="button" (click)="removeMenuOption(i)" class="btn btn-danger btn-icon">
+                <span>🗑️</span>
+              </button>
+            </div>
+            <button type="button" (click)="addMenuOption()" class="btn btn-outline">
+              <span>➕</span> Ajouter une option
+            </button>
+          </div>
+        </div>
+
+        <!-- Action -->
+        <div *ngSwitchCase="'action'" class="type-specific-properties">
+          <h4>Configuration de l'action</h4>
+          
+          <div class="form-field">
+            <label>Type d'action</label>
+            <select [(ngModel)]="selectedNode.data.actionType" name="actionType" class="form-select">
+              <option value="playback">Lecture audio</option>
+              <option value="record">Enregistrement</option>
+              <option value="dtmf">Collecte DTMF</option>
+              <option value="database">Requête base de données</option>
+            </select>
+          </div>
+
+          <div class="form-field" *ngIf="selectedNode.data.actionType === 'playback'">
+            <label>Fichier audio</label>
+            <input type="text" [(ngModel)]="selectedNode.data.audioFile" name="audioFile" class="form-input">
+          </div>
+
+          <div class="form-field" *ngIf="selectedNode.data.actionType === 'record'">
+            <label>Durée maximale (secondes)</label>
+            <input type="number" [(ngModel)]="selectedNode.data.maxDuration" name="maxDuration" class="form-input">
+          </div>
+        </div>
+
+        <!-- Condition -->
+        <div *ngSwitchCase="'condition'" class="type-specific-properties">
+          <h4>Configuration de la condition</h4>
+          
+          <div class="form-field">
+            <label>Variable à tester</label>
+            <input type="text" [(ngModel)]="selectedNode.data.variable" name="variable" class="form-input">
+          </div>
+
+          <div class="form-field">
+            <label>Opérateur</label>
+            <select [(ngModel)]="selectedNode.data.operator" name="operator" class="form-select">
+              <option value="equals">Égal à</option>
+              <option value="notEquals">Différent de</option>
+              <option value="contains">Contient</option>
+              <option value="greaterThan">Supérieur à</option>
+              <option value="lessThan">Inférieur à</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Valeur de comparaison</label>
+            <input type="text" [(ngModel)]="selectedNode.data.value" name="value" class="form-input">
+          </div>
+        </div>
+
+        <!-- Transfert -->
+        <div *ngSwitchCase="'transfer'" class="type-specific-properties">
+          <h4>Configuration du transfert</h4>
+          
+          <div class="form-field">
+            <label>Type de transfert</label>
+            <select [(ngModel)]="selectedNode.data.transferType" name="transferType" class="form-select">
+              <option value="blind">Transfert aveugle</option>
+              <option value="attended">Transfert surveillé</option>
+              <option value="queue">File d'attente</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Destination</label>
+            <input type="text" [(ngModel)]="selectedNode.data.destination" name="destination" class="form-input">
+          </div>
+
+          <div class="form-field">
+            <label>Timeout (secondes)</label>
+            <input type="number" [(ngModel)]="selectedNode.data.timeout" name="transferTimeout" class="form-input">
+          </div>
+        </div>
+
+        <!-- Démarrage -->
+        <div *ngSwitchCase="'start'" class="type-specific-properties">
+          <h4>Configuration du démarrage</h4>
+          
+          <div class="form-field">
+            <label>Message d'accueil</label>
+            <textarea [(ngModel)]="selectedNode.data.welcomeMessage" name="startWelcome" rows="2" class="form-textarea"></textarea>
+          </div>
+        </div>
+
+        <!-- Fin -->
+        <div *ngSwitchCase="'end'" class="type-specific-properties">
+          <h4>Configuration de fin</h4>
+          
+          <div class="form-field">
+            <label>Message de fin</label>
+            <textarea [(ngModel)]="selectedNode.data.goodbyeMessage" name="goodbyeMessage" rows="2" class="form-textarea"></textarea>
+          </div>
+
+          <div class="form-field">
+            <label>Action après message</label>
+            <select [(ngModel)]="selectedNode.data.endAction" name="endAction" class="form-select">
+              <option value="hangup">Raccrocher</option>
+              <option value="return">Retourner au menu principal</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Boutons d'action -->
+      <div class="action-buttons">
+        <button type="submit" class="btn btn-primary">
+          <span>💾</span> Sauvegarder
+        </button>
+        <button type="button" (click)="resetProperties()" class="btn btn-secondary">
+          <span>🔄</span> Réinitialiser
+        </button>
+        <button type="button" (click)="deleteNode()" class="btn btn-danger">
+          <span>🗑️</span> Supprimer
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <ng-template #noSelection>
+    <div class="no-selection">
+      <div class="large-icon">👆</div>
+      <h4>Aucun nœud sélectionné</h4>
+      <p>Cliquez sur un nœud dans le canvas pour voir ses propriétés</p>
+    </div>
+  </ng-template>
+</div>

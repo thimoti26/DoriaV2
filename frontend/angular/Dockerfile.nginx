@@ -1,0 +1,11 @@
+FROM nginx:alpine
+
+# Copier la configuration nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copier les fichiers buildés Angular
+COPY web/ /usr/share/nginx/html/
+
+EXPOSE 3000
+
+CMD ["nginx", "-g", "daemon off;"]
